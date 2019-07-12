@@ -1,0 +1,22 @@
+{
+  "name": "fcc-algorithms",
+  "version": "1.0.0",
+  "description": "freeCodeCamp algorithms and data structures",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest"
+  },
+  "author": "Donald Fries",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "^24.8.0",
+    "jest-extended": "^0.11.1"
+  },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "jest-extended"
+    ]
+  }
+}
