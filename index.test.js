@@ -72,3 +72,25 @@ test('Implement Merge Sort', () => {
   expect(algorithms.mergeSort([1, 4, 2, 8, 345, 123, 43, 32, 5643, 63, 123, 43, 2, 55, 1, 234, 92]))
     .toStrictEqual([1, 1, 2, 2, 4, 8, 32, 43, 43, 55, 63, 92, 123, 123, 234, 345, 5643])
 })
+
+test('Implement Breadth First Search', () => {
+  expect(algorithms.bfs([[0, 1, 0, 0], [1, 0, 1, 0], [0, 1, 0, 1], [0, 0, 1, 0]], 1))
+    .toStrictEqual({ 0: 1, 1: 0, 2: 1, 3: 2 })
+  expect(algorithms.bfs([[0, 1, 0, 0], [1, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 0]], 1))
+    .toStrictEqual({ 0: 1, 1: 0, 2: 1, 3: Infinity })
+  expect(algorithms.bfs([[0, 1, 0, 0], [1, 0, 1, 0], [0, 1, 0, 1], [0, 0, 1, 0]], 0))
+    .toStrictEqual({ 0: 0, 1: 1, 2: 2, 3: 3 })
+  expect(algorithms.bfs([[0, 1], [1, 0]], 0))
+    .toStrictEqual({ 0: 0, 1: 1 })
+})
+
+test('Implement Depth First Search', () => {
+  expect(algorithms.dfs([[0, 1, 0, 0], [1, 0, 1, 0], [0, 1, 0, 1], [0, 0, 1, 0]], 1))
+    .toStrictEqual([1, 0, 2, 3])
+  expect(algorithms.dfs([[0, 1, 0, 0], [1, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 0]], 3))
+    .toStrictEqual([3])
+  expect(algorithms.dfs([[0, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], 3))
+    .toStrictEqual([3, 2])
+  expect(algorithms.dfs([[0, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], 0))
+    .toStrictEqual([0, 1])
+})

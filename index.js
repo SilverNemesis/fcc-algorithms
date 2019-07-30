@@ -239,6 +239,63 @@ function mergeSort(array) {
   return sort(array)
 }
 
+function bfs(graph, root) {
+  const queue = []
+  const enqueue = (element) => {
+    queue.push(element)
+  }
+  const dequeue = (element) => {
+    return queue.shift()
+  }
+  const isEmpty = () => {
+    return queue.length === 0
+  }
+
+  const nodeCount = graph.length
+  const nodesLen = {}
+  let distance = 0
+
+  enqueue(root)
+
+  while (!isEmpty()) {
+    const nodes = []
+    while (!isEmpty()) {
+      nodes.push(dequeue())
+    }
+    nodes.forEach((node) => {
+      nodesLen[node] = distance
+      for (let i = 0; i < nodeCount; i++) {
+        if (graph[node][i] && nodesLen[i] === undefined) {
+          enqueue(i)
+        }
+      }
+    })
+    distance++
+  }
+
+  for (let i = 0; i < nodeCount; i++) {
+    if (nodesLen[i] === undefined) {
+      nodesLen[i] = Infinity
+    }
+  }
+
+  return nodesLen
+}
+
+function dfs(graph, root) {
+  const visited = []
+  const explore = (graph, node) => {
+    visited.push(node)
+    graph[node].forEach((p, n) => {
+      if (p && !visited.includes(n)) {
+        explore(graph, n)
+      }
+    })
+  }
+  explore(graph, root)
+  return visited
+}
+
 module.exports = {
   findSymmetricDifference,
   updateInventory,
@@ -248,5 +305,7 @@ module.exports = {
   selectionSort,
   insertionSort,
   quickSort,
-  mergeSort
+  mergeSort,
+  bfs,
+  dfs
 }
