@@ -136,7 +136,7 @@ function selectionSort(array) {
   }
   const len = array.length
   for (let i = 0; i < len - 1; i++) {
-    var min = i
+    let min = i
     for (let j = i + 1; j < len; j++) {
       if (array[j] < array[min]) {
         min = j
@@ -654,7 +654,7 @@ function isBalanced(str) {
     } else if (str[i] == ']') {
       level--
       if (level < 0) {
-        return false;
+        return false
       }
     } else {
       return false
@@ -672,20 +672,588 @@ function getCircles(...args) {
     if (r === 0) {
       return 'Radius Zero'
     } else {
-      return 'Coincident point.Infinite solutions'
+      return 'Coincident point. Infinite solutions'
     }
   } else if (d > r * 2) {
-    return 'No intersection.Points further apart than circle diameter'
+    return 'No intersection. Points further apart than circle diameter'
   } else if (d === r * 2) {
     return [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2]
   }
 
-  p3 = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2]
+  const p3 = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2]
 
   return [
     [Number((p3[0] + Math.sqrt(r * r - (d / 2) * (d / 2)) * (p1[1] - p2[1]) / d).toFixed(4)), Number((p3[1] + Math.sqrt(r * r - (d / 2) * (d / 2)) * (p2[0] - p1[0]) / d).toFixed(4))],
     [Number((p3[0] - Math.sqrt(r * r - (d / 2) * (d / 2)) * (p1[1] - p2[1]) / d).toFixed(4)), Number((p3[1] - Math.sqrt(r * r - (d / 2) * (d / 2)) * (p2[0] - p1[0]) / d).toFixed(4))]
   ]
+}
+
+class Point {
+  constructor(x, y) {
+    this.x = x
+    this.y = y
+  }
+  getX() {
+    return this.x
+  }
+  getY() {
+    return this.y
+  }
+}
+
+function getClosestPair(pointsArr) {
+  const N = pointsArr.length
+
+  if (N < 2) {
+    return Infinity
+  }
+
+  function calcDistance(i, j) {
+    const x = pointsArr[i].getX() - pointsArr[j].getX()
+    const y = pointsArr[i].getY() - pointsArr[j].getY()
+    return x * x + y * y
+  }
+
+  let minDistance = calcDistance(0, 1)
+  let minPoints = [0, 1]
+
+  for (let i = 1; i < N; i++) {
+    for (let j = i + 1; j < N; j++) {
+      const dist = calcDistance(i, j)
+      if (dist < minDistance) {
+        minDistance = dist
+        minPoints = [i, j]
+      }
+    }
+  }
+
+  const answer = {
+    distance: Math.sqrt(minDistance),
+    pair: [
+      pointsArr[minPoints[0]],
+      pointsArr[minPoints[1]]
+    ]
+  }
+
+  function flip(answer) {
+    const temp = answer.pair[0]
+    answer.pair[0] = answer.pair[1]
+    answer.pair[1] = temp
+  }
+
+  if (answer.pair[0].getX() > answer.pair[1].getX()) {
+    flip(answer)
+  } else if (answer.pair[0].getX() === answer.pair[1].getX()) {
+    if (answer.pair[0].getY() > answer.pair[1].getY()) {
+      flip(answer)
+    }
+  }
+
+  return answer
+}
+
+function combinations(m, n) {
+  const index = new Array(m)
+  const max = new Array(m)
+
+  for (let i = 0; i < m; i++) {
+    index[i] = i
+    max[i] = n - m + i
+  }
+
+  const results = []
+  let c = true
+  while (c) {
+    results.push([...index])
+    let i = m - 1
+    index[i]++
+    if (index[i] > max[i]) {
+      for (; i >= 0; i--) {
+        if (index[i] < max[i]) {
+          break
+        }
+      }
+      if (i === -1) {
+        c = false
+      } else {
+        index[i]++
+        for (i = i + 1; i < m; i++) {
+          index[i] = index[i - 1] + 1
+        }
+      }
+    }
+  }
+
+  return results
+}
+
+function quibble(words) {
+  const n = words.length
+  if (n == 0) {
+    return '{}'
+  } else if (n == 1) {
+    return '{' + words[0] + '}'
+  } else if (n == 2) {
+    return '{' + words[0] + ' and ' + words[1] + '}'
+  } else {
+    return '{' + words.slice(0, n - 1).join(',') + ' and ' + words[n - 1] + '}'
+  }
+}
+
+function allEqual(arr) {
+  const n = arr.length
+  for (let i = 1; i < n; i++) {
+    if (arr[0] !== arr[i]) {
+      return false
+    }
+  }
+  return true
+}
+
+function azSorted(arr) {
+  const n = arr.length
+  for (let i = 1; i < n; i++) {
+    if (arr[i - 1] >= arr[i]) {
+      return false
+    }
+  }
+  return true
+}
+
+function convertSeconds(sec) {
+  const s = sec % 60
+  const m = Math.floor(sec / 60) % 60
+  const h = Math.floor(sec / 3600) % 24
+  const d = Math.floor(sec / 86400) % 7
+  const w = Math.floor(sec / 604800)
+  let answer
+  function append(value, units) {
+    if (value > 0) {
+      if (answer) {
+        answer += ', ' + value + ' ' + units
+      } else {
+        answer = value + ' ' + units
+      }
+    }
+  }
+  append(w, 'wk')
+  append(d, 'd')
+  append(h, 'hr')
+  append(m, 'min')
+  append(s, 'sec')
+  return answer
+}
+
+function countSubstring(str, subStr) {
+  const l = subStr.length
+  let count = 0
+  let index = 0
+  while (true) {
+    index = str.indexOf(subStr, index)
+    if (index === -1) {
+      break
+    }
+    index += l
+    count++
+  }
+  return count
+}
+
+function countCoins(amount) {
+  const mq = Math.floor(amount / 25)
+  const md = Math.floor(amount / 10)
+  const mn = Math.floor(amount / 5)
+
+  let count = 0
+  for (let q = 0; q <= mq; q++) {
+    for (let d = 0; d <= md; d++) {
+      if (q * 25 + d * 10 > amount) {
+        continue
+      }
+      for (let n = 0; n <= mn; n++) {
+        if (q * 25 + d * 10 + n * 5 > amount) {
+          continue
+        }
+        count++
+      }
+    }
+  }
+  return count
+}
+
+function cramersRule(matrix, freeTerms) {
+  function det(M) {
+    if (M.length == 2) {
+      return (M[0][0] * M[1][1]) - (M[0][1] * M[1][0])
+    }
+    let answer = 0
+    for (let i = 0; i < M.length; i++) {
+      answer += Math.pow(-1, i) * M[0][i] * det(minor(M, 0, i))
+    }
+    return answer
+  }
+
+  function minor(M, i, j) {
+    return [...M.slice(0, i), ...M.slice(i + 1)].map(row => [...row.slice(0, j), ...row.slice(j + 1)])
+  }
+
+  function replaceColumn(M, index, col) {
+    const N = M.map(row => [...row])
+    const n = N.length
+    for (let i = 0; i < n; i++) {
+      N[i][index] = col[i]
+    }
+    return N
+  }
+
+  const d = det(matrix)
+  const answer = []
+  const n = matrix.length
+  for (let i = 0; i < n; i++) {
+    answer.push(det(replaceColumn(matrix, i, freeTerms)) / d)
+  }
+  return answer
+}
+
+function getDateFormats(date) {
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  if (!date) {
+    date = new Date()
+  }
+  return [
+    date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0'),
+    days[date.getDay()] + ', ' + months[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear()
+  ]
+}
+
+function add12Hours(dateString) {
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  const c = dateString.toUpperCase().split(' ')
+  const tc = c[3].split(':')
+  tc[2] = tc[1].slice(-2)
+  tc[1] = tc[1].slice(0, -2)
+  if (tc[2] == 'PM') {
+    tc[0] = (Number(tc[0]) + 12).toString()
+  }
+  const origDateString = c[0] + ' ' + c[1] + ' ' + c[2] + ' ' + tc[0] + ':' + tc[1] + ' ' + c[4]
+  const origDate = new Date(origDateString)
+  let date = new Date(origDate.getTime() + 12 * 60 * 60 * 1000)
+  const offset = (date.getTimezoneOffset() - new Date().getTimezoneOffset()) * 60 * 1000
+  date = new Date(date.getTime() + offset)
+  let h = date.getHours()
+  let ap = 'am'
+  if (h > 12) {
+    h -= 12
+    ap = 'pm'
+  }
+  return months[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear() + ' ' + h + ':' + date.getMinutes() + ap + ' EST'
+}
+
+function findXmasSunday(start, end) {
+  const answer = []
+  for (let year = start; year <= end; year++) {
+    const date = new Date(year + '-12-25 12:00')
+    if (date.getDay() === 0) {
+      answer.push(year)
+    }
+  }
+  return answer
+}
+
+const cards = ['AC', 'AD', 'AH', 'AS', '2C', '2D', '2H', '2S', '3C', '3D', '3H', '3S', '4C', '4D', '4H', '4S', '5C', '5D', '5H', '5S', '6C', '6D', '6H', '6S', '7C', '7D', '7H', '7S', '8C', '8D', '8H', '8S', '9C', '9D', '9H', '9S', 'TC', 'TD', 'TH', 'TS', 'JC', 'JD', 'JH', 'JS', 'QC', 'QD', 'QH', 'QS', 'KC', 'KD', 'KH', 'KS']
+
+function dealFreeCell(seed) {
+  let state = seed
+
+  function getRandom() {
+    state = (214013 * state + 2531011) & 2147483647
+    return Math.floor(state / 65536)
+  }
+
+  function swap(arr, i, j) {
+    const temp = arr[i]
+    arr[i] = arr[j]
+    arr[j] = temp
+  }
+
+  let deck = cards.slice(0)
+  let deckLen = deck.length
+  const game = []
+  while (deckLen > 0) {
+    const hand = []
+    for (let i = 0; i < 8 && deckLen > 0; i++) {
+      const cardIndex = getRandom() % deckLen
+      swap(deck, cardIndex, deckLen - 1)
+      const card = deck.pop()
+      deckLen = deck.length
+      hand.push(card)
+    }
+    game.push(hand)
+  }
+  return game
+}
+
+function deepcopy(obj) {
+  return JSON.parse(JSON.stringify(obj))
+}
+
+class Num {
+  constructor(n) {
+    if (isNaN(Number(n))) {
+      throw TypeError('Not a Number')
+    }
+    if (n < 1 || n > 10) {
+      throw TypeError('Out of range')
+    }
+    this._value = n
+  }
+  valueOf() {
+    return this._value
+  }
+  toString() {
+    return this._value.toString()
+  }
+}
+
+function departments(possibleNumbers, total) {
+  const answer = []
+  const len = possibleNumbers.length
+  for (let i = 0; i < len; i++) {
+    if (possibleNumbers[i] % 2 === 1) {
+      continue;
+    }
+    for (let j = 0; j < len; j++) {
+      if (j === i) {
+        continue;
+      }
+      for (let k = 0; k < len; k++) {
+        if (k === i || k === j) {
+          continue;
+        }
+        if (possibleNumbers[i] + possibleNumbers[j] + possibleNumbers[k] === total) {
+          answer.push([possibleNumbers[i], possibleNumbers[j], possibleNumbers[k]])
+        }
+      }
+    }
+  }
+  return answer
+}
+
+function discordianDate(date) {
+  const seasons = ['Chaos', 'Discord', 'Confusion', 'Bureaucracy', 'The Aftermath']
+  const days = ['Sweetmorn', 'Boomtime', 'Pungenday', 'Prickle-Prickle', 'Setting Orange']
+  const holyDays = {
+    'Chaos 5': 'Mungday',
+    'Chaos 50': 'Chaoflux',
+    'Discord 5': 'Mojoday',
+    'Discord 50': 'Discoflux',
+    'Confusion 5': 'Syaday',
+    'Confusion 50': 'Confuflux',
+    'Bureaucracy 5': 'Zaraday',
+    'Bureaucracy 50': 'Bureflux',
+    'The Aftermath 5': 'Maladay',
+    'The Aftermath 50': 'Afflux'
+  }
+
+  function getOrdinalSuffix(number) {
+    const lastDigit = number % 10
+    const nextDigit = (number / 10) % 10
+    if (nextDigit === 1) {
+      return 'th'
+    } else {
+      switch (lastDigit) {
+        case 1:
+          return 'st'
+        case 2:
+          return 'nd'
+        case 3:
+          return 'rd'
+        default:
+          return 'th'
+      }
+    }
+  }
+
+  const refYear = date.getFullYear()
+  const refDay = Math.floor((date.getTime() - (new Date(refYear + '-01-01')).getTime()) / 86400000)
+  const yold = refYear + 1166
+  const season = seasons[Math.floor(refDay / 73)]
+  const leap = (refYear % 4) == 0
+  const dayOfSeason = (leap && refDay > 59 ? (refDay - 1) : refDay) % 73 + 1
+  const dayOfWeek = days[(leap && refDay > 59 ? (refDay - 1) : refDay) % 5]
+  let holiday = ''
+  if (leap && refDay === 59) {
+    holiday = '. Celebrate St. Tib\'s Day!'
+  } else if (holyDays[season + ' ' + dayOfSeason]) {
+    holiday = '. Celebrate ' + holyDays[season + ' ' + dayOfSeason] + '!'
+  }
+  return dayOfWeek + ', the ' + dayOfSeason + getOrdinalSuffix(dayOfSeason) + ' day of ' + season + ' in the YOLD ' + yold + holiday
+}
+
+function operation(op, arr1, arr2) {
+  const n = arr1.length
+  const m = arr1[0].length
+  const answer = new Array(n)
+  for (let i = 0; i < n; i++) {
+    answer[i] = new Array(m)
+  }
+  switch (op) {
+    case 'm_add':
+      for (let i = 0; i < n; i++) {
+        for (let j = 0; j < m; j++) {
+          answer[i][j] = arr1[i][j] + arr2[i][j]
+        }
+      }
+      break
+    case 's_add':
+      for (let i = 0; i < n; i++) {
+        for (let j = 0; j < m; j++) {
+          answer[i][j] = arr1[i][j] + arr2
+        }
+      }
+      break
+    case 'm_sub':
+      for (let i = 0; i < n; i++) {
+        for (let j = 0; j < m; j++) {
+          answer[i][j] = arr1[i][j] - arr2[i][j]
+        }
+      }
+      break
+    case 'm_mult':
+      for (let i = 0; i < n; i++) {
+        for (let j = 0; j < m; j++) {
+          answer[i][j] = arr1[i][j] * arr2[i][j]
+        }
+      }
+      break
+    case 'm_div':
+      for (let i = 0; i < n; i++) {
+        for (let j = 0; j < m; j++) {
+          answer[i][j] = arr1[i][j] / arr2[i][j]
+        }
+      }
+      break
+    case 'm_exp':
+      for (let i = 0; i < n; i++) {
+        for (let j = 0; j < m; j++) {
+          answer[i][j] = arr1[i][j] ** arr2[i][j]
+        }
+      }
+      break
+  }
+  return answer
+}
+
+function emirps(num, show) {
+  function isPrime(n) {
+    if (isNaN(n) || !isFinite(n) || n % 1 || n < 2) {
+      return false
+    }
+    if (n % 2 == 0) {
+      return (n == 2)
+    }
+    if (n % 3 == 0) {
+      return (n == 3)
+    }
+    const m = Math.sqrt(n)
+    for (let i = 5; i <= m; i += 6) {
+      if (n % i == 0) {
+        return false
+      }
+      if (n % (i + 2) == 0) {
+        return false
+      }
+    }
+    return true
+  }
+
+  function reverse(n) {
+    return Number(n.toString().split('').reverse().join(''))
+  }
+
+  let low = 0
+  let high = Number.MAX_SAFE_INTEGER
+  let cnt = 0
+  if (Array.isArray(num)) {
+    low = num[0]
+    high = num[1]
+  } else {
+    cnt = num
+  }
+
+  if (show) {
+    const answer = []
+    for (let i = low; i <= high; i++) {
+      if (isPrime(i)) {
+        const j = reverse(i)
+        if (j !== i && isPrime(j)) {
+          answer.push(i)
+          if (cnt !== 0 && answer.length === cnt) {
+            break
+          }
+        }
+      }
+    }
+    return answer
+  } else {
+    let answer = 0
+    let count = 0
+    for (let i = low; i <= high; i++) {
+      if (isPrime(i)) {
+        const j = reverse(i)
+        if (j !== i && isPrime(j)) {
+          if (cnt === 0) {
+            answer++
+          } else {
+            answer = i
+            if (++count === cnt) {
+              break
+            }
+          }
+        }
+      }
+    }
+    return answer
+  }
+}
+
+function entropy(s) {
+  const N = s.length
+  const m = new Map()
+  for (let i = 0; i < N; i++) {
+    if (m.has(s[i])) {
+      m.set(s[i], m.get(s[i]) + 1)
+    } else {
+      m.set(s[i], 1)
+    }
+  }
+  let sum = 0
+  for (let count of m.values()) {
+    sum += count / N * Math.log2(count / N)
+  }
+  if (sum === 0) {
+    return 0
+  }
+  return -sum
+}
+
+function equilibrium(a) {
+  const answer = []
+  const n = a.length
+  if (n > 0) {
+    const total = a.reduce((acc, val) => {
+      return acc + val
+    })
+    let sum = 0
+    for (let i = 0; i < n; i++) {
+      if (sum === (total - a[i]) / 2) {
+        answer.push(i)
+      }
+      sum += a[i]
+    }
+  }
+  return answer
 }
 
 module.exports = {
@@ -714,5 +1282,26 @@ module.exports = {
   rms,
   babbage,
   isBalanced,
-  getCircles
+  getCircles,
+  getClosestPair,
+  combinations,
+  quibble,
+  allEqual,
+  azSorted,
+  convertSeconds,
+  countSubstring,
+  countCoins,
+  cramersRule,
+  getDateFormats,
+  add12Hours,
+  findXmasSunday,
+  dealFreeCell,
+  deepcopy,
+  Num,
+  departments,
+  discordianDate,
+  operation,
+  emirps,
+  entropy,
+  equilibrium
 }
