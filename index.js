@@ -936,8 +936,7 @@ function add12Hours(dateString) {
   if (tc[2] == 'PM') {
     tc[0] = (Number(tc[0]) + 12).toString()
   }
-  const origDateString = c[0] + ' ' + c[1] + ' ' + c[2] + ' ' + tc[0] + ':' + tc[1] + ' ' + c[4]
-  const origDate = new Date(origDateString)
+  const origDate = new Date(Number(c[2]), months.findIndex(month => month.toUpperCase() == c[0]), Number(c[1]), Number(tc[0]), Number(tc[1]))
   let date = new Date(origDate.getTime() + 12 * 60 * 60 * 1000)
   const offset = (date.getTimezoneOffset() - new Date().getTimezoneOffset()) * 60 * 1000
   date = new Date(date.getTime() + offset)
@@ -1021,15 +1020,15 @@ function departments(possibleNumbers, total) {
   const len = possibleNumbers.length
   for (let i = 0; i < len; i++) {
     if (possibleNumbers[i] % 2 === 1) {
-      continue;
+      continue
     }
     for (let j = 0; j < len; j++) {
       if (j === i) {
-        continue;
+        continue
       }
       for (let k = 0; k < len; k++) {
         if (k === i || k === j) {
-          continue;
+          continue
         }
         if (possibleNumbers[i] + possibleNumbers[j] + possibleNumbers[k] === total) {
           answer.push([possibleNumbers[i], possibleNumbers[j], possibleNumbers[k]])
@@ -1256,6 +1255,30 @@ function equilibrium(a) {
   return answer
 }
 
+function eth_mult(a, b) {
+  function half(n) {
+    return n >> 1
+  }
+
+  function double(n) {
+    return n << 1
+  }
+
+  function isEven(n) {
+    return n % 2 == 0
+  }
+
+  let sum = 0
+  while (a > 0) {
+    if (!isEven(a)) {
+      sum += b
+    }
+    a = half(a)
+    b = double(b)
+  }
+  return sum
+}
+
 module.exports = {
   findSymmetricDifference,
   updateInventory,
@@ -1303,5 +1326,6 @@ module.exports = {
   operation,
   emirps,
   entropy,
-  equilibrium
+  equilibrium,
+  eth_mult
 }
