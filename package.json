@@ -12,7 +12,7 @@
   "dependencies": {},
   "devDependencies": {
     "jest": "^24.8.0",
-    "jest-extended": "^0.11.1"
+    "jest-extended": "^0.11.2"
   },
   "jest": {
     "setupFilesAfterEnv": [
